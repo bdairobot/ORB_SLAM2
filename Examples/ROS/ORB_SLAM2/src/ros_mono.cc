@@ -48,9 +48,10 @@ int main(int argc, char **argv)
     ros::init(argc, argv, "Mono");
     ros::start();
 
-    if(argc != 3)
+    if(argc != 3 && argc != 4)
     {
-        cerr << endl << "Usage: rosrun ORB_SLAM2 Mono path_to_vocabulary path_to_settings" << endl;        
+        cerr << endl << "Usage: rosrun ORB_SLAM2 Mono path_to_vocabulary path_to_settings OR " << endl << "rosrun ORB_SLAM2 Mono path_to_vocabulary path_to_settings Image_Topic_Name" << endl;
+        
         ros::shutdown();
         return 1;
     }    
@@ -61,7 +62,8 @@ int main(int argc, char **argv)
     ImageGrabber igb(&SLAM);
 
     ros::NodeHandle nodeHandler;
-    ros::Subscriber sub = nodeHandler.subscribe("/camera/image_raw", 1, &ImageGrabber::GrabImage,&igb);
+    string topic_name = argc == 4 ? string(argv[3]) : "/camera/image_raw";
+    ros::Subscriber sub = nodeHandler.subscribe(topic_name, 1, &ImageGrabber::GrabImage,&igb);
 
     ros::spin();
 
